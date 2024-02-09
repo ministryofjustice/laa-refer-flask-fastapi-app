@@ -3,6 +3,13 @@ venv
 
 #pythoncache
 backend/__pycache__
+frontend/__pycache__
+migrations/__pycache__
+
+#Not sure if these should be ignored
+#migrations/versions/__pycache__
+
 
 #testdb
 refer_test.db
+

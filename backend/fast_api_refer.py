@@ -12,7 +12,7 @@ app = FastAPI()
 def read_root():
     return {"message": "This is FastAPIRefer.py returning something"}
 
-#  https://fastapi.tiangolo.com/advanced/middleware/
+# https://fastapi.tiangolo.com/advanced/middleware/
 # middleware to allow requests from the frontend
 app.add_middleware(
     CORSMiddleware,
@@ -49,7 +49,7 @@ def save_input(user_input: UserInput, db: Session = Depends(database.get_db)):
     db.refresh(db_user)
     return {"user_id": db_user.id, "message": "WooHoo!! - Name saved successfully"}
 
-
+#  this is to display the data so I can see that it did actually come across from flask
 @app.get("/get_data/{user_id}")
 def get_data(user_id: int, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
