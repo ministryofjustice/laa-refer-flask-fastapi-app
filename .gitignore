@@ -1,2 +1,8 @@
 #python env
-.venv
+venv
+
+#pythoncache
+backend/__pycache__
+
+#testdb
+refer_test.db
