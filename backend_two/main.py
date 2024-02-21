@@ -4,6 +4,7 @@ from typing import Optional, List
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from sqlalchemy import Boolean, Column, Float, String, Integer
+from pydantic import constr, ValidationError, validator
 
 app1 = FastAPI()
 
@@ -41,7 +42,8 @@ Base.metadata.create_all(bind=engine)
 class User(BaseModel):
     name: str
     account_number: str
-    nino: str
+    # nino: str # replaced by line below with stricter validation
+    nino: constr(min_length=8, max_length=9)  # sometimes a NINO can not include the final letter in the string format LLNNNNNNL
     description: Optional[str] = None
     appointment_booked: bool
     user_contacted: bool
@@ -50,7 +52,19 @@ class User(BaseModel):
     billable_units: int
 
     class Config:
-        orm_mode = True  # this relates to the db when I eventually set it up
+        orm_mode = True
+
+    @validator("nino")
+    def validate_nino_length_and_pattern(cls, value):
+        if len(value) not in (8,9):
+            raise ValueError("NINO must be exactly 9 characters long")
+        import re
+        pattern = re.compile(r"^[A-CEGHJ-PR-TW-Z]{1}[A-CEGHJ-NPR-TW-Z]{1}[0-9]{6}[A-DFM]{0,1}$")
+        if not pattern.match(value):
+            raise ValueError("NINO must match the specified pattern LLNNNNNN(L)")
+        if not value.isalnum():
+            raise ValueError("NINO must contain only alphanumeric characters")
+        return value
 
 def get_user(db: Session, user_id: int):
     return db.query(DBUser).where(DBUser.id == user_id).first()
