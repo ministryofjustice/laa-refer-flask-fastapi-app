@@ -1,6 +1,7 @@
 #python env
 venv
-
+env
+backend_two/env
 #pythoncache
 backend/__pycache__
 frontend/__pycache__
