@@ -42,8 +42,8 @@ Base.metadata.create_all(bind=engine)
 class User(BaseModel):
     name: str
     account_number: str
-    # nino: str # replaced by line below with stricter validation
-    nino: constr(min_length=8, max_length=9)  # sometimes a NINO can not include the final letter in the string format LLNNNNNNL
+    nino: str # replaced by line below with stricter validation
+    # nino: constr(min_length=8)  # sometimes a NINO can not include the final letter in the string format LLNNNNNNL
     description: Optional[str] = None
     appointment_booked: bool
     user_contacted: bool
@@ -57,7 +57,7 @@ class User(BaseModel):
     @validator("nino")
     def validate_nino_length_and_pattern(cls, value):
         if len(value) not in (8,9):
-            raise ValueError("NINO must be exactly 9 characters long")
+            raise ValueError("NINO must be 8 or 9 characters long")
         import re
         pattern = re.compile(r"^[A-CEGHJ-PR-TW-Z]{1}[A-CEGHJ-NPR-TW-Z]{1}[0-9]{6}[A-DFM]{0,1}$")
         if not pattern.match(value):
