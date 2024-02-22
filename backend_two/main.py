@@ -42,8 +42,7 @@ Base.metadata.create_all(bind=engine)
 class User(BaseModel):
     name: str
     account_number: str
-    nino: str # replaced by line below with stricter validation
-    # nino: constr(min_length=8)  # sometimes a NINO can not include the final letter in the string format LLNNNNNNL
+    nino: str
     description: Optional[str] = None
     appointment_booked: bool
     user_contacted: bool
@@ -92,15 +91,18 @@ async def root(): # run this method when the route is called
 
 # V2 of /users
 @app1.post('/users/', response_model=User)
+# create a new user
 def create_users_view(user: User, db: Session = Depends(get_db)):
     db_user = create_user(db, user)
     return db_user
 
 @app1.get('/users/', response_model=List[User])
+# show me all users
 def get_users_view(db: Session = Depends(get_db)):
     return get_users(db)
 
 @app1.get('/users/{user_id}')
+#  show me a specific user
 def get_user_view(user_id: int, db: Session = Depends(get_db)):
     return get_user(db, user_id)
 
